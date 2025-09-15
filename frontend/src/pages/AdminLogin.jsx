@@ -1,53 +1,102 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";  // ✅ no `.jsx`
+import apiClient from "../api/apiClient";
 
 const AdminLogin = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (localStorage.getItem("adminToken")) {
+      navigate("/admin/dashboard");
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+
     try {
-      const res = await axios.post('http://localhost:5000/api/admin/login', { username, password });
-      login(res.data.token);
-      navigate('/admin/dashboard');
+      const res = await apiClient.post("/admin/login", { username, password });
+
+      if (res.data && res.data.token) {
+        login(res.data.token);
+        navigate("/admin/dashboard");
+      } else {
+        setErrorMsg("Login failed: No token received.");
+      }
     } catch (err) {
-      alert('Login failed. Invalid credentials.');
+      console.error("Login error:", err);
+      setErrorMsg("Invalid credentials or server error.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-full bg-gray-100 p-4">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center transition-transform transform hover:scale-105">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Admin Login</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-          <div>
-            <label className="block text-left font-semibold text-gray-700 mb-2" htmlFor="username">Username</label>
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-4">
+      <div className="backdrop-blur-xl bg-white/30 border border-white/40 p-10 rounded-2xl shadow-2xl w-full max-w-md text-center transition-all duration-300 hover:scale-105 hover:shadow-3xl">
+        <h2 className="text-4xl font-extrabold text-gray-800 mb-6 drop-shadow-sm">
+          Admin Login
+        </h2>
+
+        {errorMsg && (
+          <div className="bg-red-100 text-red-600 border border-red-300 p-3 rounded-lg mb-4 text-sm">
+            {errorMsg}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
+          <div className="text-left">
+            <label
+              className="block font-semibold text-gray-700 mb-2"
+              htmlFor="username"
+            >
+              Username
+            </label>
             <input
               type="text"
               id="username"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white/70 backdrop-blur-sm"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
-          <div>
-            <label className="block text-left font-semibold text-gray-700 mb-2" htmlFor="password">Password</label>
+
+          <div className="text-left">
+            <label
+              className="block font-semibold text-gray-700 mb-2"
+              htmlFor="password"
+            >
+              Password
+            </label>
             <input
               type="password"
               id="password"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white/70 backdrop-blur-sm"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
-          <button type="submit" className="w-full bg-teal-500 text-white p-3 rounded-lg font-bold text-lg hover:bg-teal-600 transition-colors duration-300 transform hover:scale-105">Login</button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full bg-gradient-to-r from-teal-500 to-teal-600 text-white py-3 rounded-lg font-bold text-lg shadow-md transition-all duration-300 transform hover:scale-105 hover:from-teal-600 hover:to-teal-700 ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
     </div>

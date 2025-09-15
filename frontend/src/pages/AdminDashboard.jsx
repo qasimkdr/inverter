@@ -1,232 +1,212 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+// src/pages/AdminDashboard.jsx
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import apiClient from "../api/apiClient";
+import ProductManager from "../components/ProductManager";
+import CarouselManager from "../components/CarouselManager";
+import OrdersManager from "../components/OrdersManager";
 
 const AdminDashboard = () => {
-    const [products, setProducts] = useState([]);
-    const [orders, setOrders] = useState([]);
-    const [productForm, setProductForm] = useState({
-        name: '',
-        description: '',
-        price: '',
-        imageUrl: '',
-        isTrending: false,
-    });
-    const [imageFile, setImageFile] = useState(null); // State for the selected image file
-    const { logout } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [carouselImages, setCarouselImages] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [modal, setModal] = useState({ open: false, type: "success", message: "" });
 
-    const token = localStorage.getItem('adminToken');
-    const headers = { Authorization: `Bearer ${token}` };
+  const { logout } = useAuth();
+  const token = localStorage.getItem("adminToken");
+  const headers = { Authorization: `Bearer ${token}` };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const productsRes = await axios.get('http://localhost:5000/api/products', { headers });
-                setProducts(productsRes.data);
-                const ordersRes = await axios.get('http://localhost:5000/api/orders/admin', { headers });
-                setOrders(ordersRes.data);
-            } catch (err) {
-                console.error('Error fetching data:', err);
-            }
-        };
-        fetchData();
-    }, [headers]);
+  // Fetch products, orders, carousel, categories
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [productsRes, ordersRes, carouselRes, categoriesRes] = await Promise.all([
+          apiClient.get("/products", { headers }),
+          apiClient.get("/orders/admin", { headers }),
+          apiClient.get("/carousel"),
+          apiClient.get("/categories", { headers }),
+        ]);
 
-    const handleLogout = () => {
-        logout();
+        setProducts(productsRes.data);
+        setOrders(ordersRes.data);
+        setCarouselImages(carouselRes.data);
+        setCategories(categoriesRes.data.map((c) => c.name));
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        showModal("error", "Failed to fetch data");
+      }
     };
 
-    const handleMarkComplete = async (id) => {
-        try {
-            await axios.put(`http://localhost:5000/api/orders/admin/${id}/complete`, {}, { headers });
-            setOrders(orders.map((order) => (order._id === id ? { ...order, status: 'completed' } : order)));
-        } catch (err) {
-            console.error('Error marking as complete:', err);
-        }
-    };
+    fetchData();
+  }, []);
 
-    const handleFormChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setProductForm((prev) => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value,
-        }));
-    };
+  // Helpers
+  const showModal = (type, message) => {
+    setModal({ open: true, type, message });
+    setTimeout(() => setModal({ open: false, type: "", message: "" }), 2500);
+  };
 
-    // New function to handle file selection
-    const handleFileChange = (e) => {
-        setImageFile(e.target.files[0]);
-    };
+  // Products
+  const handleAddProduct = async (productData, imageFile) => {
+    try {
+      let imageUrl = productData.imageUrl;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        const res = await apiClient.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data", ...headers },
+        });
+        imageUrl = res.data.imageUrl;
+      }
 
-    // Combined function to upload image and then create the product
-    const handleAddProduct = async (e) => {
-        e.preventDefault();
+      const res = await apiClient.post("/products", { ...productData, imageUrl }, { headers });
+      setProducts((prev) => [...prev, res.data]);
+      showModal("success", "Product added successfully!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to add product");
+    }
+  };
 
-        // 1. Upload image to Cloudinary first
-        let imageUrl = '';
-        if (imageFile) {
-            const formData = new FormData();
-            formData.append('image', imageFile);
+  const handleUpdateProduct = async (id, productData, imageFile) => {
+    try {
+      let imageUrl = productData.imageUrl;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        const res = await apiClient.post("/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data", ...headers },
+        });
+        imageUrl = res.data.imageUrl;
+      }
 
-            try {
-                const res = await axios.post('http://localhost:5000/api/upload', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' },
-                });
-                imageUrl = res.data.imageUrl;
-            } catch (err) {
-                console.error('Image upload failed:', err);
-                alert('Image upload failed.');
-                return; // Stop execution if image upload fails
-            }
-        }
+      const res = await apiClient.put(`/products/${id}`, { ...productData, imageUrl }, { headers });
+      setProducts((prev) => prev.map((p) => (p._id === id ? res.data : p)));
+      showModal("success", "Product updated successfully!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to update product");
+    }
+  };
 
-        // 2. Create the product with the received imageUrl
-        const productData = {
-            ...productForm,
-            imageUrl: imageUrl,
-        };
+  const handleDeleteProduct = async (id) => {
+    try {
+      await apiClient.delete(`/products/${id}`, { headers });
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+      showModal("success", "Product deleted successfully!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to delete product");
+    }
+  };
 
-        try {
-            const res = await axios.post('http://localhost:5000/api/products', productData, { headers });
-            setProducts([...products, res.data]); // Use the response to get the full product object
-            setProductForm({ name: '', description: '', price: '', imageUrl: '', isTrending: false });
-            setImageFile(null);
-            alert('Product added successfully!');
-        } catch (err) {
-            console.error('Error adding product:', err);
-            alert('Failed to add product.');
-        }
-    };
+  // Categories
+  const handleAddCategory = async (name) => {
+    try {
+      const res = await apiClient.post("/categories", { name }, { headers });
+      setCategories((prev) => [...prev, res.data.name]);
+      showModal("success", "Category added successfully!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to add category");
+    }
+  };
 
-    return (
-        <div className="bg-gray-100 min-h-screen p-8 pt-16">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-4xl font-bold text-gray-800">Admin Dashboard</h2>
-                <button
-                    onClick={handleLogout}
-                    className="bg-red-500 text-white font-bold py-2 px-4 rounded-full hover:bg-red-600 transition-colors duration-300"
-                >
-                    Logout
-                </button>
-            </div>
+  // Carousel
+  const handleAddCarousel = async (imageFile) => {
+    try {
+      if (!imageFile) return;
+      const formData = new FormData();
+      formData.append("image", imageFile);
+      const res = await apiClient.post("/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data", ...headers },
+      });
 
-            {/* Product Management Section */}
-            <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Add New Product</h3>
-                <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="Product Name"
-                        value={productForm.name}
-                        onChange={handleFormChange}
-                        required
-                        className="p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                    <input
-                        type="number" // Use type number for price
-                        name="price"
-                        placeholder="Price"
-                        value={productForm.price}
-                        onChange={handleFormChange}
-                        required
-                        className="p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                    <textarea
-                        name="description"
-                        placeholder="Description"
-                        value={productForm.description}
-                        onChange={handleFormChange}
-                        className="p-3 border rounded-md col-span-1 md:col-span-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    />
-                    
-                    {/* New file input for image upload */}
-                    <div className="col-span-1 md:col-span-2">
-                        <label className="block mb-2 text-gray-600">Upload Image</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            required
-                            className="p-3 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
-                        />
-                        {imageFile && (
-                            <p className="mt-2 text-sm text-green-600 truncate">Image selected: {imageFile.name}</p>
-                        )}
-                    </div>
+      const newImage = await apiClient.post(
+        "/carousel",
+        { imageUrl: res.data.imageUrl },
+        { headers }
+      );
 
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name="isTrending"
-                            checked={productForm.isTrending}
-                            onChange={handleFormChange}
-                            className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
-                        />
-                        <label className="text-gray-600">Mark as Trending</label>
-                    </div>
-                    <button
-                        type="submit"
-                        className="bg-teal-500 text-white font-bold py-3 px-6 rounded-full col-span-1 md:col-span-2 hover:bg-teal-600 transition-colors duration-300"
-                    >
-                        Add Product
-                    </button>
-                </form>
-            </div>
+      setCarouselImages((prev) => [...prev, newImage.data]);
+      showModal("success", "Carousel image added!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to add carousel image");
+    }
+  };
 
-            {/* Orders Management Section */}
-            <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Orders</h3>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {orders.length > 0 ? (
-                                orders.map((order) => (
-                                    <tr key={order._id}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order._id}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.customerDetails.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <span
-                                                className={`inline-flex px-2 text-xs font-semibold leading-5 rounded-full ${
-                                                    order.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                                                }`}
-                                            >
-                                                {order.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            {order.status === 'pending' && (
-                                                <button
-                                                    onClick={() => handleMarkComplete(order._id)}
-                                                    className="bg-green-500 text-white py-1 px-3 rounded-full hover:bg-green-600 transition-colors duration-300"
-                                                >
-                                                    Mark Complete
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="4" className="text-center py-4 text-gray-500">
-                                        No orders found.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+  const handleDeleteCarousel = async (id) => {
+    try {
+      await apiClient.delete(`/carousel/${id}`, { headers });
+      setCarouselImages((prev) => prev.filter((img) => img._id !== id));
+      showModal("success", "Carousel image deleted!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to delete carousel image");
+    }
+  };
+
+  // Orders
+  const handleCompleteOrder = async (id) => {
+    try {
+      await apiClient.put(`/orders/admin/${id}/complete`, {}, { headers });
+      setOrders((prev) => prev.map((o) => (o._id === id ? { ...o, status: "completed" } : o)));
+      showModal("success", "Order marked as complete!");
+    } catch (err) {
+      console.error(err);
+      showModal("error", "Failed to complete order");
+    }
+  };
+
+  return (
+    <div className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen p-6 pt-20">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-4xl font-bold text-gray-800">Admin Dashboard</h2>
+        <button
+          onClick={logout}
+          className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-2 px-6 rounded-full shadow-md hover:opacity-90 transition"
+        >
+          Logout
+        </button>
+      </div>
+
+      {/* Managers */}
+      <ProductManager
+        products={products}
+        categories={categories}
+        onAdd={handleAddProduct}
+        onUpdate={handleUpdateProduct}
+        onDelete={handleDeleteProduct}
+        onAddCategory={handleAddCategory}
+      />
+
+      <CarouselManager
+        carouselImages={carouselImages}
+        onAdd={handleAddCarousel}
+        onDelete={handleDeleteCarousel}
+      />
+
+      <OrdersManager orders={orders} onComplete={handleCompleteOrder} />
+
+      {/* Glassy Modal */}
+      {modal.open && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
+          <div
+            className={`p-6 rounded-2xl shadow-xl text-white text-center ${
+              modal.type === "success"
+                ? "bg-green-500/90"
+                : "bg-red-500/90"
+            }`}
+          >
+            <p className="text-lg font-semibold">{modal.message}</p>
+          </div>
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default AdminDashboard;
