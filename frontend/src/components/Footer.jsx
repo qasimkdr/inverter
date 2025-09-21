@@ -42,8 +42,8 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/cart" className="hover:text-teal-400 transition-colors">
-                Cart
+              <a href="/contact" className="hover:text-teal-400 transition-colors">
+                Contact Us
               </a>
             </li>
             <li>
@@ -54,45 +54,24 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Customer Support */}
+        {/* Developer Contact */}
         <div>
           <h3 className="text-lg font-semibold text-white mb-4 border-b border-gray-600 inline-block pb-1">
-            Customer Support
+            Developer Contact
           </h3>
           <ul className="space-y-3">
             <li>
               <a
-                href="/help"
-                className="hover:text-teal-400 transition-colors"
+                href="tel:03163273012"
+                className="block text-teal-400 font-semibold text-lg hover:text-white transition-all transform hover:scale-105"
               >
-                Help Center
-              </a>
-            </li>
-            <li>
-              <a
-                href="/returns"
-                className="hover:text-teal-400 transition-colors"
-              >
-                Returns
-              </a>
-            </li>
-            <li>
-              <a
-                href="/shipping"
-                className="hover:text-teal-400 transition-colors"
-              >
-                Shipping
-              </a>
-            </li>
-            <li>
-              <a
-                href="/contact"
-                className="hover:text-teal-400 transition-colors"
-              >
-                Contact Us
+                📞 Call: 03163273012
               </a>
             </li>
           </ul>
+          <p className="mt-3 text-sm text-gray-400">
+            Reach out if you want a website like this.
+          </p>
         </div>
 
         {/* Social Links */}
