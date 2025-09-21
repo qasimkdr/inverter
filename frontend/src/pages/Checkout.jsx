@@ -39,17 +39,20 @@ const Checkout = () => {
 
   const handleConfirmOrder = async () => {
     if (!product) return;
+
     const orderData = {
       items: [
         {
-          productId: product._id,
-          name: product.name,
+          productId: product._id,        // ✅ product reference
+          name: product.name,            // ✅ snapshot product name
+          imageUrl: product.imageUrl,    // ✅ snapshot product image
           quantity,
-          price: product.price,
+          price: product.price,          // ✅ snapshot product price
         },
       ],
       customerDetails,
     };
+
     try {
       const res = await apiClient.post("/orders", orderData);
       setNewOrderId(res.data.orderId);
