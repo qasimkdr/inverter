@@ -13,28 +13,22 @@ const Home = () => {
 
   const { ref: trendingRef, inView: trendingInView } = useInView({ threshold: 0.1, triggerOnce: true });
   const { ref: recentRef, inView: recentInView } = useInView({ threshold: 0.1, triggerOnce: true });
-  const { ref: whyRef, inView: whyInView } = useInView({ threshold: 0.1, triggerOnce: true });
-  const { ref: reviewsRef, inView: reviewsInView } = useInView({ threshold: 0.1, triggerOnce: true });
-  const { ref: citiesRef, inView: citiesInView } = useInView({ threshold: 0.1, triggerOnce: true });
-  const { ref: faqRef, inView: faqInView } = useInView({ threshold: 0.1, triggerOnce: true });
-
-  const cities = [
-    { name: "Karachi", image: "https://images.unsplash.com/photo-1596707323136-22442491b3b2?q=80&w=2070&auto=format&fit=crop" },
-    { name: "Lahore", image: "https://images.unsplash.com/photo-1596707323136-22442491b3b2?q=80&w=2070&auto=format&fit=crop" },
-    { name: "Islamabad", image: "https://images.unsplash.com/photo-1596707323136-22442491b3b2?q=80&w=2070&auto=format&fit=crop" },
-  ];
+  const { ref: whyRef } = useInView({ threshold: 0.1, triggerOnce: true });
+  const { ref: reviewsRef } = useInView({ threshold: 0.1, triggerOnce: true });
+  const { ref: citiesRef } = useInView({ threshold: 0.1, triggerOnce: true });
+  const { ref: faqRef } = useInView({ threshold: 0.1, triggerOnce: true });
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
         const carouselRes = await apiClient.get("/carousel");
-        setCarouselImages(carouselRes.data);
+        setCarouselImages(Array.isArray(carouselRes.data) ? carouselRes.data : []);
 
         const trendingRes = await apiClient.get("/products/trending");
-        setTrendingProducts(trendingRes.data);
+        setTrendingProducts(Array.isArray(trendingRes.data) ? trendingRes.data : []);
 
         const recentRes = await apiClient.get("/products");
-        setRecentProducts(recentRes.data.slice(0, 4));
+        setRecentProducts(Array.isArray(recentRes.data) ? recentRes.data.slice(0, 4) : []);
 
         setError(null);
       } catch (err) {
@@ -47,12 +41,17 @@ const Home = () => {
 
   return (
     <div className="bg-gradient-to-b from-gray-50 via-gray-100 to-gray-200 min-h-screen pt-16">
-      {/* Hero Carousel */}
-      <MainCarousel images={carouselImages} />
+      {/* Hero Carousel with light black background */}
+      <div className="bg-black/70 py-6 rounded-xl shadow-lg mx-4">
+        <MainCarousel images={carouselImages} />
+      </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-auto my-4 w-11/12" role="alert">
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-auto my-4 w-11/12"
+          role="alert"
+        >
           <strong className="font-bold">Error!</strong>
           <span className="block sm:inline"> {error}</span>
         </div>
@@ -72,7 +71,7 @@ const Home = () => {
         >
           {trendingProducts.length > 0 ? (
             trendingProducts.map((product) => (
-              <div key={product._id} className="transform transition-transform hover:scale-105 duration-300">
+              <div key={product._id || product.id} className="transform transition-transform hover:scale-105 duration-300">
                 <ProductCard product={product} />
               </div>
             ))
@@ -90,11 +89,14 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Inverter Banner after Trending */}
-      <div
-        className="w-full h-80 bg-cover bg-center my-16 rounded-3xl shadow-lg"
-        style={{ backgroundImage: `url('https://images.unsplash.com/photo-1603791440384-56cd371ee9a7')` }}
-      ></div>
+      {/* Inverter Banner after Trending - ✅ Updated with inverter1.png */}
+      <div className="w-full h-96 my-16 rounded-3xl shadow-lg bg-black flex items-center justify-center">
+  <img
+    src="/inverter1.png"
+    alt="Inverter 1"
+    className="h-full object-contain"
+  />
+</div>
 
       {/* Recently Added */}
       <section className="py-20 px-8 text-center bg-gradient-to-r from-teal-50 via-white to-indigo-50 rounded-3xl shadow-xl mx-6 my-12 backdrop-blur-lg">
@@ -110,7 +112,7 @@ const Home = () => {
         >
           {recentProducts.length > 0 ? (
             recentProducts.map((product) => (
-              <div key={product._id} className="transform transition-transform hover:scale-105 duration-300">
+              <div key={product._id || product.id} className="transform transition-transform hover:scale-105 duration-300">
                 <ProductCard product={product} />
               </div>
             ))
@@ -172,10 +174,14 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Empty Banner Space After Reviews */}
-      <div className="w-full h-80 bg-gray-200 my-16 rounded-3xl shadow-inner flex items-center justify-center">
-        <p className="text-gray-500">[Add Image Here]</p>
-      </div>
+      {/* Inverter Banner after Reviews - ✅ Updated with inverter2.png */}
+      <div className="w-full h-96 my-16 rounded-3xl shadow-lg bg-black flex items-center justify-center">
+  <img
+    src="/inverter2.png"
+    alt="Inverter 2"
+    className="h-full object-contain"
+  />
+</div>
 
       {/* Cities */}
       <section ref={citiesRef} className="py-20 px-6 text-center bg-gradient-to-r from-teal-100 via-white to-indigo-100">
@@ -184,20 +190,22 @@ const Home = () => {
           <span className="block w-24 h-1 bg-gradient-to-r from-indigo-500 to-teal-400 mx-auto mt-4 rounded-full"></span>
         </h2>
         <div className="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-8 md:space-y-0">
-          {cities.map((city, index) => (
-            <div
-              key={index}
-              className="relative w-64 h-72 rounded-2xl overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-105"
-              style={{ animationDelay: `${index * 0.2}s` }}
-            >
-              <img src={city.image} alt={city.name} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-end">
-                <h4 className="w-full text-white text-xl font-bold py-3 text-center bg-gradient-to-r from-indigo-600/80 to-teal-500/80">
-                  {city.name}
-                </h4>
+          {[{ name: "Karachi", image: "/Karachi.jpg" }, { name: "Lahore", image: "/lahore.png" }, { name: "Islamabad", image: "/islamabad.jpg" }].map(
+            (city, index) => (
+              <div
+                key={index}
+                className="relative w-72 h-80 rounded-2xl overflow-hidden shadow-xl transform transition-transform duration-300 hover:scale-105"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <img src={city.image} alt={city.name} className="absolute inset-0 w-full h-full object-cover object-center" />
+                <div className="absolute inset-0 bg-black/40 flex items-end">
+                  <h4 className="w-full text-white text-xl font-bold py-3 text-center bg-gradient-to-r from-indigo-600/80 to-teal-500/80">
+                    {city.name}
+                  </h4>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </section>
 

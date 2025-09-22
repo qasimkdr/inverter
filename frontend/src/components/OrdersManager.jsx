@@ -30,24 +30,39 @@ const OrdersManager = ({ orders, onComplete }) => {
                   <td className="px-6 py-4">{o.orderId}</td>
                   <td className="px-6 py-4">{o.customerDetails.name}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        o.status === "completed" ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        o.status === "completed"
+                          ? "bg-green-100 text-green-800"
+                          : "bg-yellow-100 text-yellow-800"
                       }`}
                     >
                       {o.status}
                     </span>
                   </td>
                   <td className="px-6 py-4 space-x-2">
-                    <button onClick={() => setSelectedOrder(o)} className="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600">View</button>
+                    <button
+                      onClick={() => setSelectedOrder(o)}
+                      className="bg-blue-500 text-white px-3 py-1 rounded-full hover:bg-blue-600"
+                    >
+                      View
+                    </button>
                     {o.status === "pending" && (
-                      <button onClick={() => onComplete(o._id)} className="bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600">Complete</button>
+                      <button
+                        onClick={() => onComplete(o._id)}
+                        className="bg-green-500 text-white px-3 py-1 rounded-full hover:bg-green-600"
+                      >
+                        Complete
+                      </button>
                     )}
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">No orders found.</td>
+                <td colSpan="4" className="text-center py-4 text-gray-500">
+                  No orders found.
+                </td>
               </tr>
             )}
           </tbody>
@@ -62,24 +77,41 @@ const OrdersManager = ({ orders, onComplete }) => {
           <div className="bg-white/90 p-8 rounded-2xl shadow-2xl w-full max-w-lg">
             <h3 className="text-2xl font-bold mb-4 text-gray-800">Order #{selectedOrder.orderId}</h3>
             <div className="space-y-4 text-left">
+              {/* Customer Info */}
               <div>
                 <h4 className="text-lg font-semibold border-b pb-1">Customer Info</h4>
                 <p><strong>Name:</strong> {selectedOrder.customerDetails.name}</p>
                 <p><strong>Email:</strong> {selectedOrder.customerDetails.email}</p>
                 <p><strong>Phone:</strong> {selectedOrder.customerDetails.phone}</p>
+                <p><strong>Address:</strong> {selectedOrder.customerDetails.address}, {selectedOrder.customerDetails.state}</p>
               </div>
+
+              {/* Items */}
               <div>
                 <h4 className="text-lg font-semibold border-b pb-1">Items</h4>
                 {selectedOrder.items.map((i) => (
-                  <div key={i.productId} className="flex justify-between">
-                    <p>{i.name} × {i.quantity}</p>
+                  <div key={i.productId} className="flex justify-between items-center py-2">
+                    <div className="flex items-center space-x-3">
+                      {/* <img
+                        src={i.imageUrl}
+                        alt={i.name}
+                        className="w-12 h-12 object-cover rounded border"
+                        onError={(e) => (e.currentTarget.src = "/no-image.png")}
+                      /> */}
+                      <p>{i.name} × {i.quantity}</p>
+                    </div>
                     <p>${(i.price * i.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="flex justify-end mt-6">
-              <button onClick={() => setSelectedOrder(null)} className="bg-gray-300 px-6 py-2 rounded-full hover:bg-gray-400">Close</button>
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="bg-gray-300 px-6 py-2 rounded-full hover:bg-gray-400"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

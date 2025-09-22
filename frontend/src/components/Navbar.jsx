@@ -12,10 +12,10 @@ const Navbar = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const toggleSearch = () => setIsSearchOpen((prev) => !prev);
 
-  // 🔍 Fetch live results with debounce
+  // 🔍 Debounced live search
   useEffect(() => {
     if (!searchQuery.trim()) {
       setResults([]);
@@ -25,20 +25,23 @@ const Navbar = () => {
     const delayDebounce = setTimeout(async () => {
       try {
         setLoading(true);
-        const res = await apiClient.get(`/products?search=${encodeURIComponent(searchQuery)}`);
-        setResults(res.data);
+        const res = await apiClient.get(
+          `/products?search=${encodeURIComponent(searchQuery)}`
+        );
+        // Ensure it's always an array
+        setResults(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Search error:", err);
         setResults([]);
       } finally {
         setLoading(false);
       }
-    }, 400); // debounce: 400ms
+    }, 400);
 
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
-  // Go to products page with search results
+  // Navigate to product details
   const handleResultClick = (product) => {
     setSearchQuery("");
     setResults([]);
@@ -63,7 +66,7 @@ const Navbar = () => {
         <ul className="hidden md:flex space-x-6 font-medium text-gray-800">
           <li><Link to="/" className="hover:text-indigo-600">Home</Link></li>
           <li><Link to="/products" className="hover:text-indigo-600">Products</Link></li>
-          <li><Link to="/shops" className="hover:text-indigo-600">Shops</Link></li>
+          {/* <li><Link to="/shops" className="hover:text-indigo-600">Shops</Link></li> */}
           <li><Link to="/about" className="hover:text-indigo-600">About Us</Link></li>
           <li><Link to="/contact" className="hover:text-indigo-600">Contact Us</Link></li>
         </ul>
@@ -79,10 +82,12 @@ const Navbar = () => {
               className="px-3 py-2 text-gray-700 rounded-full w-56 border bg-gray-100 outline-none focus:ring-2 focus:ring-indigo-500"
             />
             {loading && (
-              <span className="absolute right-3 top-2 text-gray-400 text-sm">...</span>
+              <span className="absolute right-3 top-2 text-gray-400 text-sm">
+                ...
+              </span>
             )}
 
-            {/* Results dropdown */}
+            {/* Search dropdown */}
             {results.length > 0 && (
               <div className="absolute mt-2 bg-white border rounded-lg shadow-lg w-64 max-h-64 overflow-y-auto z-50">
                 {results.map((p) => (
@@ -96,7 +101,9 @@ const Navbar = () => {
                       alt={p.name}
                       className="w-10 h-10 object-cover rounded mr-3"
                     />
-                    <span className="text-sm font-medium text-gray-700">{p.name}</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {p.name}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -153,7 +160,9 @@ const Navbar = () => {
                       alt={p.name}
                       className="w-10 h-10 object-cover rounded mr-3"
                     />
-                    <span className="text-sm font-medium text-gray-700">{p.name}</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {p.name}
+                    </span>
                   </button>
                 ))}
               </div>
