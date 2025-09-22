@@ -1,3 +1,5 @@
+// src/components/Footer.jsx
+import { Link } from "react-router-dom";
 import {
   FaFacebook,
   FaTwitter,
@@ -29,27 +31,33 @@ export default function Footer() {
           </h3>
           <ul className="space-y-3">
             <li>
-              <a href="/" className="hover:text-teal-400 transition-colors">
+              <Link to="/" className="hover:text-teal-400 transition-colors">
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <a
-                href="/products"
+              <Link
+                to="/products"
                 className="hover:text-teal-400 transition-colors"
               >
                 Products
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/contact" className="hover:text-teal-400 transition-colors">
+              <Link
+                to="/contact"
+                className="hover:text-teal-400 transition-colors"
+              >
                 Contact Us
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/about" className="hover:text-teal-400 transition-colors">
+              <Link
+                to="/about"
+                className="hover:text-teal-400 transition-colors"
+              >
                 About Us
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
