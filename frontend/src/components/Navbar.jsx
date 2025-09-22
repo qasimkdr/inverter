@@ -183,7 +183,7 @@ const Navbar = () => {
           >
             <Link to="/" onClick={toggleMenu} className="block hover:text-indigo-600">Home</Link>
             <Link to="/products" onClick={toggleMenu} className="block hover:text-indigo-600">Products</Link>
-            <Link to="/shops" onClick={toggleMenu} className="block hover:text-indigo-600">Shops</Link>
+            
             <Link to="/about" onClick={toggleMenu} className="block hover:text-indigo-600">About Us</Link>
             <Link to="/contact" onClick={toggleMenu} className="block hover:text-indigo-600">Contact Us</Link>
             <Link
