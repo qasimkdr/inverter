@@ -45,7 +45,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const adminAuthRoutes = require("./routes/adminAuthRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-const carouselRoutes = require("./routes/CarouselRoutes");
+const carouselRoutes = require("./routes/carouselRoutes");
 
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
