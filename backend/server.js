@@ -1,49 +1,58 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Dynamic CORS configuration using the environment variable
-const corsOptions = {
-  origin: process.env.FRONTEND_URL,
-};
+// Allowed origins (local + production frontend)
+const allowedOrigins = [
+  "http://localhost:5174", // local dev
+  process.env.FRONTEND_URL, // deployed frontend (from .env)
+].filter(Boolean); // removes undefined if env is not set
 
-// Middleware
-app.use(cors(corsOptions));
+// Dynamic CORS config
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps / curl)
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error("❌ CORS blocked for origin:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// --- Database Connection ---
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Routes
-const productRoutes = require('./routes/productRoutes');
-const orderRoutes = require('./routes/orderRoutes'); // This is likely line 25
-const adminAuthRoutes = require('./routes/adminAuthRoutes');
-const uploadRoutes = require('./routes/uploadRoutes');
-
-
+// --- Routes ---
+const productRoutes = require("./routes/productRoutes");
+const orderRoutes = require("./routes/orderRoutes");
+const adminAuthRoutes = require("./routes/adminAuthRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const carouselRoutes = require("./routes/carouselRoutes");
+
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminAuthRoutes);
+app.use("/api/upload", uploadRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/carousel", carouselRoutes);
 
-
-
-// ...
-const carouselRoutes = require('./routes/carouselRoutes');
-// ...
-
-app.use('/api/carousel', carouselRoutes);
-// ...
-
-
-// Route Middlewares
-app.use('/api/upload', uploadRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes); // This is likely line 29
-app.use('/api/admin', adminAuthRoutes);
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// --- Start Server ---
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
