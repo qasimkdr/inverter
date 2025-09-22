@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const carouselController = require("../controllers/carouselController");
+const carouselController = require("../controllers/CarouselController");
 const { protectAdminRoute } = require("../middleware/authMiddleware");
 
 const router = express.Router();
