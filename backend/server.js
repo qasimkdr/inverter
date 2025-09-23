@@ -54,5 +54,9 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/carousel", carouselRoutes);
 
+
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 // --- Start Server ---
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
