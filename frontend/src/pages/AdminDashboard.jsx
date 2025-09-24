@@ -164,7 +164,7 @@ const AdminDashboard = () => {
     <div className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen p-6 pt-20">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-4xl font-bold text-gray-800">Admin Dashboard</h2>
+        <h2 className="text-4xl font-bold text-gray-900">Admin Dashboard</h2>
         <button
           onClick={logout}
           className="bg-gradient-to-r from-red-500 to-red-600 text-white font-bold py-2 px-6 rounded-full shadow-md hover:opacity-90 transition"
@@ -197,8 +197,8 @@ const AdminDashboard = () => {
           <div
             className={`p-6 rounded-2xl shadow-xl text-white text-center ${
               modal.type === "success"
-                ? "bg-green-500/90"
-                : "bg-red-500/90"
+                ? "bg-green-600/90"
+                : "bg-red-600/90"
             }`}
           >
             <p className="text-lg font-semibold">{modal.message}</p>
