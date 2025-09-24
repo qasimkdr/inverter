@@ -43,11 +43,11 @@ const Checkout = () => {
     const orderData = {
       items: [
         {
-          productId: product._id,        // ✅ product reference
-          name: product.name,            // ✅ snapshot product name
-          imageUrl: product.imageUrl,    // ✅ snapshot product image
+          productId: product._id,
+          name: product.name,
+          imageUrl: product.imageUrl,
           quantity,
-          price: product.price,          // ✅ snapshot product price
+          price: product.price,
         },
       ],
       customerDetails,
@@ -107,7 +107,7 @@ const Checkout = () => {
               <div className="flex justify-between text-lg font-medium">
                 <span>Price:</span>
                 <span className="text-indigo-600 font-bold">
-                  ${product.price.toFixed(2)}
+                  PKR {product.price.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -126,7 +126,7 @@ const Checkout = () => {
               <div className="flex justify-between text-xl font-bold border-t border-gray-200 pt-4">
                 <span>Total:</span>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-teal-500">
-                  ${total.toFixed(2)}
+                  PKR {total.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -217,7 +217,7 @@ const Checkout = () => {
                 <strong>Quantity:</strong> {quantity}
               </p>
               <p>
-                <strong>Total:</strong> ${total.toFixed(2)}
+                <strong>Total:</strong> PKR {total.toFixed(2)}
               </p>
               <p>
                 <strong>Name:</strong> {customerDetails.name}
