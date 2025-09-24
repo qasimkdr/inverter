@@ -84,11 +84,8 @@ const Checkout = () => {
     <div className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen flex flex-col items-center py-12 pt-20">
       {/* Glassy Checkout Card */}
       <div className="backdrop-blur-lg bg-white/40 border border-white/30 p-10 rounded-2xl shadow-2xl w-full max-w-3xl">
-        <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
-          Checkout
-        </h2>
 
-        {/* Product Section (Image + Description full width) */}
+        {/* Product Section */}
         <div className="mb-10">
           <h3 className="text-2xl font-semibold mb-6 text-indigo-700">
             Product Details
@@ -97,11 +94,19 @@ const Checkout = () => {
             <img
               src={product.imageUrl}
               alt={product.name}
-              className="w-56 h-56 object-cover rounded-xl shadow-md mb-6"
+              className="w-80 h-80 object-contain rounded-xl shadow-md mb-6 bg-white"
             />
             <div className="text-center">
-              <h4 className="font-semibold text-lg">{product.name}</h4>
-              <p className="text-gray-600 text-sm mt-2">{product.description}</p>
+              {/* Product Name */}
+              <h4 className="font-bold text-2xl text-indigo-800">{product.name}</h4>
+
+              {/* Product Description */}
+              <p
+                className="text-gray-700 text-base mt-4 whitespace-pre-line text-left"
+                dangerouslySetInnerHTML={{
+                  __html: product.description.replace(/\n/g, "<br />"),
+                }}
+              ></p>
             </div>
           </div>
           <div className="space-y-4 border-t border-gray-200 pt-6">
@@ -210,28 +215,13 @@ const Checkout = () => {
               Review Your Order
             </h3>
             <div className="text-left space-y-2 text-gray-700">
-              <p>
-                <strong>Item:</strong> {product.name}
-              </p>
-              <p>
-                <strong>Quantity:</strong> {quantity}
-              </p>
-              <p>
-                <strong>Total:</strong> PKR {total.toFixed(2)}
-              </p>
-              <p>
-                <strong>Name:</strong> {customerDetails.name}
-              </p>
-              <p>
-                <strong>Email:</strong> {customerDetails.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {customerDetails.phone}
-              </p>
-              <p>
-                <strong>Address:</strong> {customerDetails.address},{" "}
-                {customerDetails.state}
-              </p>
+              <p><strong>Item:</strong> {product.name}</p>
+              <p><strong>Quantity:</strong> {quantity}</p>
+              <p><strong>Total:</strong> PKR {total.toFixed(2)}</p>
+              <p><strong>Name:</strong> {customerDetails.name}</p>
+              <p><strong>Email:</strong> {customerDetails.email}</p>
+              <p><strong>Phone:</strong> {customerDetails.phone}</p>
+              <p><strong>Address:</strong> {customerDetails.address}, {customerDetails.state}</p>
             </div>
             <div className="flex justify-center gap-4 mt-6">
               <button
@@ -263,8 +253,7 @@ const Checkout = () => {
               <span className="font-bold text-indigo-600">{newOrderId}</span>
             </p>
             <p className="text-gray-600 mb-6">
-              Our team will contact you in less than 24 hrs to confirm your
-              order.
+              Our team will contact you in less than 24 hrs to confirm your order.
             </p>
             <button
               onClick={handleCloseSuccessModal}
