@@ -55,7 +55,7 @@ const ProductCard = ({ product, index = 0 }) => {
         <div
           className={`inline-block self-start bg-gradient-to-r ${gradient} text-white text-sm font-semibold px-3 py-1 rounded-full mb-4 shadow`}
         >
-          PKR{Number(product.price).toLocaleString()}
+          PKR {Number(product.price).toLocaleString()}
         </div>
 
         {/* CTA */}
