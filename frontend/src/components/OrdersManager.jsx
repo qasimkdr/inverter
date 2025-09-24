@@ -11,24 +11,24 @@ const OrdersManager = ({ orders, onComplete }) => {
 
   return (
     <div className="backdrop-blur-lg bg-white/40 border border-white/30 p-6 rounded-2xl shadow-xl">
-      <h3 className="text-2xl font-semibold text-gray-800 mb-4">Orders</h3>
+      <h3 className="text-2xl font-semibold text-gray-900 mb-4">Orders</h3>
 
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 bg-white/30 rounded-lg">
           <thead className="bg-gray-100/70">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Order ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Customer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Order ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Customer</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody>
             {paginated.length > 0 ? (
               paginated.map((o) => (
                 <tr key={o._id} className="hover:bg-gray-50/60">
-                  <td className="px-6 py-4">{o.orderId}</td>
-                  <td className="px-6 py-4">{o.customerDetails.name}</td>
+                  <td className="px-6 py-4 text-gray-900">{o.orderId}</td>
+                  <td className="px-6 py-4 text-gray-900">{o.customerDetails.name}</td>
                   <td className="px-6 py-4">
                     <span
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
@@ -60,7 +60,7 @@ const OrdersManager = ({ orders, onComplete }) => {
               ))
             ) : (
               <tr>
-                <td colSpan="4" className="text-center py-4 text-gray-500">
+                <td colSpan="4" className="text-center py-4 text-gray-700">
                   No orders found.
                 </td>
               </tr>
@@ -75,15 +75,20 @@ const OrdersManager = ({ orders, onComplete }) => {
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white/90 p-8 rounded-2xl shadow-2xl w-full max-w-lg">
-            <h3 className="text-2xl font-bold mb-4 text-gray-800">Order #{selectedOrder.orderId}</h3>
-            <div className="space-y-4 text-left">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900">
+              Order #{selectedOrder.orderId}
+            </h3>
+            <div className="space-y-4 text-left text-gray-900">
               {/* Customer Info */}
               <div>
                 <h4 className="text-lg font-semibold border-b pb-1">Customer Info</h4>
                 <p><strong>Name:</strong> {selectedOrder.customerDetails.name}</p>
                 <p><strong>Email:</strong> {selectedOrder.customerDetails.email}</p>
                 <p><strong>Phone:</strong> {selectedOrder.customerDetails.phone}</p>
-                <p><strong>Address:</strong> {selectedOrder.customerDetails.address}, {selectedOrder.customerDetails.state}</p>
+                <p>
+                  <strong>Address:</strong> {selectedOrder.customerDetails.address},{" "}
+                  {selectedOrder.customerDetails.state}
+                </p>
               </div>
 
               {/* Items */}
@@ -92,12 +97,6 @@ const OrdersManager = ({ orders, onComplete }) => {
                 {selectedOrder.items.map((i) => (
                   <div key={i.productId} className="flex justify-between items-center py-2">
                     <div className="flex items-center space-x-3">
-                      {/* <img
-                        src={i.imageUrl}
-                        alt={i.name}
-                        className="w-12 h-12 object-cover rounded border"
-                        onError={(e) => (e.currentTarget.src = "/no-image.png")}
-                      /> */}
                       <p>{i.name} × {i.quantity}</p>
                     </div>
                     <p>${(i.price * i.quantity).toFixed(2)}</p>
