@@ -84,7 +84,7 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
 
   return (
     <div className="backdrop-blur-lg bg-white/40 border border-white/30 p-6 rounded-2xl shadow-xl mb-8">
-      <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+      <h3 className="text-2xl font-semibold text-gray-900 mb-4">
         {isEditing ? "Edit Product" : "Add New Product"}
       </h3>
 
@@ -97,7 +97,7 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
           value={form.name}
           onChange={handleChange}
           required
-          className="p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+          className="p-3 border rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-900"
         />
         <input
           type="number"
@@ -106,14 +106,14 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
           value={form.price}
           onChange={handleChange}
           required
-          className="p-3 border rounded-md focus:ring-2 focus:ring-indigo-500"
+          className="p-3 border rounded-md focus:ring-2 focus:ring-indigo-500 text-gray-900"
         />
         <textarea
           name="description"
           placeholder="Description"
           value={form.description}
           onChange={handleChange}
-          className="p-3 border rounded-md col-span-1 md:col-span-2 focus:ring-2 focus:ring-indigo-500"
+          className="p-3 border rounded-md col-span-1 md:col-span-2 focus:ring-2 focus:ring-indigo-500 text-gray-900"
         />
 
         {/* Category Input (Dropdown + Custom) */}
@@ -123,7 +123,7 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
           placeholder="Select or type new category"
           value={form.category}
           onChange={handleCategoryChange}
-          className="p-3 border rounded-md col-span-1 md:col-span-2 focus:ring-2 focus:ring-indigo-500"
+          className="p-3 border rounded-md col-span-1 md:col-span-2 focus:ring-2 focus:ring-indigo-500 text-gray-900"
         />
         <datalist id="categories">
           {categories.map((cat, idx) => (
@@ -135,7 +135,7 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="p-3 border rounded-md col-span-1 md:col-span-2"
+          className="p-3 border rounded-md col-span-1 md:col-span-2 text-gray-900"
         />
 
         <div className="flex items-center gap-2 col-span-1 md:col-span-2">
@@ -146,7 +146,7 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
             onChange={handleChange}
             className="w-4 h-4 text-indigo-600"
           />
-          <label className="text-gray-700">Mark as Trending</label>
+          <label className="text-gray-900">Mark as Trending</label>
         </div>
 
         <button
@@ -162,17 +162,17 @@ const ProductManager = ({ products, categories, onAdd, onUpdate, onDelete, onAdd
         <table className="min-w-full divide-y divide-gray-200 bg-white/30 rounded-lg">
           <thead className="bg-gray-100/70">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Image</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Category</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Price</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Trending</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Image</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Category</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Price</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Trending</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody>
             {displayedProducts.map((product) => (
-              <tr key={product._id} className="hover:bg-gray-50/60">
+              <tr key={product._id} className="hover:bg-gray-50/60 text-gray-900">
                 <td className="px-6 py-4">
                   <img
                     src={product.imageUrl}
