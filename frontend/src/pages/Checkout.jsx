@@ -1,3 +1,4 @@
+// src/pages/Checkout.jsx
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import apiClient from "../api/apiClient";
@@ -82,124 +83,123 @@ const Checkout = () => {
   return (
     <div className="bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200 min-h-screen flex flex-col items-center py-12 pt-20">
       {/* Glassy Checkout Card */}
-      <div className="backdrop-blur-lg bg-white/40 border border-white/30 p-10 rounded-2xl shadow-2xl w-full max-w-5xl">
+      <div className="backdrop-blur-lg bg-white/40 border border-white/30 p-10 rounded-2xl shadow-2xl w-full max-w-3xl">
         <h2 className="text-4xl font-extrabold text-center text-gray-900 mb-10">
           Checkout
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Product Details */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-6 text-indigo-700">
-              Product Details
-            </h3>
-            <div className="flex items-center mb-6">
-              <img
-                src={product.imageUrl}
-                alt={product.name}
-                className="w-28 h-28 object-cover rounded-xl shadow-md mr-6"
-              />
-              <div>
-                <h4 className="font-semibold text-lg">{product.name}</h4>
-                <p className="text-gray-600 text-sm">{product.description}</p>
-              </div>
-            </div>
-            <div className="space-y-4 border-t border-gray-200 pt-6">
-              <div className="flex justify-between text-lg font-medium">
-                <span>Price:</span>
-                <span className="text-indigo-600 font-bold">
-                  PKR {product.price.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <label className="font-medium" htmlFor="quantity">
-                  Quantity:
-                </label>
-                <input
-                  type="number"
-                  id="quantity"
-                  min="1"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  className="w-20 p-2 border rounded-lg text-lg text-center focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-              <div className="flex justify-between text-xl font-bold border-t border-gray-200 pt-4">
-                <span>Total:</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-teal-500">
-                  PKR {total.toFixed(2)}
-                </span>
-              </div>
+
+        {/* Product Section (Image + Description full width) */}
+        <div className="mb-10">
+          <h3 className="text-2xl font-semibold mb-6 text-indigo-700">
+            Product Details
+          </h3>
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              className="w-56 h-56 object-cover rounded-xl shadow-md mb-6"
+            />
+            <div className="text-center">
+              <h4 className="font-semibold text-lg">{product.name}</h4>
+              <p className="text-gray-600 text-sm mt-2">{product.description}</p>
             </div>
           </div>
-
-          {/* Customer Form */}
-          <form
-            onSubmit={handleProceedToOrder}
-            className="flex flex-col space-y-4"
-          >
-            <h3 className="text-2xl font-semibold mb-4 text-indigo-700">
-              Customer Details
-            </h3>
-            <input
-              type="text"
-              name="name"
-              value={customerDetails.name}
-              onChange={handleChange}
-              placeholder="Full Name"
-              required
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="email"
-              name="email"
-              value={customerDetails.email}
-              onChange={handleChange}
-              placeholder="Email"
-              required
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="tel"
-              name="phone"
-              value={customerDetails.phone}
-              onChange={handleChange}
-              placeholder="Phone Number"
-              required
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="text"
-              name="address"
-              value={customerDetails.address}
-              onChange={handleChange}
-              placeholder="Address"
-              required
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            />
-            <input
-              type="text"
-              name="state"
-              value={customerDetails.state}
-              onChange={handleChange}
-              placeholder="State"
-              required
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            />
-            <textarea
-              name="description"
-              value={customerDetails.description}
-              onChange={handleChange}
-              placeholder="Special Instructions (Optional)"
-              className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-            ></textarea>
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-indigo-600 to-teal-500 text-white font-bold py-3 px-6 rounded-full shadow-md hover:opacity-90 transition"
-            >
-              Proceed to Order
-            </button>
-          </form>
+          <div className="space-y-4 border-t border-gray-200 pt-6">
+            <div className="flex justify-between text-lg font-medium">
+              <span>Price:</span>
+              <span className="text-indigo-600 font-bold">
+                PKR {product.price.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <label className="font-medium" htmlFor="quantity">
+                Quantity:
+              </label>
+              <input
+                type="number"
+                id="quantity"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="w-20 p-2 border rounded-lg text-lg text-center focus:ring-2 focus:ring-indigo-500"
+              />
+            </div>
+            <div className="flex justify-between text-xl font-bold border-t border-gray-200 pt-4">
+              <span>Total:</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-teal-500">
+                PKR {total.toFixed(2)}
+              </span>
+            </div>
+          </div>
         </div>
+
+        {/* Customer Form */}
+        <form
+          onSubmit={handleProceedToOrder}
+          className="flex flex-col space-y-4"
+        >
+          <h3 className="text-2xl font-semibold mb-4 text-indigo-700">
+            Customer Details
+          </h3>
+          <input
+            type="text"
+            name="name"
+            value={customerDetails.name}
+            onChange={handleChange}
+            placeholder="Full Name"
+            required
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          />
+          <input
+            type="email"
+            name="email"
+            value={customerDetails.email}
+            onChange={handleChange}
+            placeholder="Email"
+            required
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          />
+          <input
+            type="tel"
+            name="phone"
+            value={customerDetails.phone}
+            onChange={handleChange}
+            placeholder="Phone Number"
+            required
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          />
+          <input
+            type="text"
+            name="address"
+            value={customerDetails.address}
+            onChange={handleChange}
+            placeholder="Address"
+            required
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          />
+          <input
+            type="text"
+            name="state"
+            value={customerDetails.state}
+            onChange={handleChange}
+            placeholder="State"
+            required
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          />
+          <textarea
+            name="description"
+            value={customerDetails.description}
+            onChange={handleChange}
+            placeholder="Special Instructions (Optional)"
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          ></textarea>
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-indigo-600 to-teal-500 text-white font-bold py-3 px-6 rounded-full shadow-md hover:opacity-90 transition"
+          >
+            Proceed to Order
+          </button>
+        </form>
       </div>
 
       {/* Review Modal */}
